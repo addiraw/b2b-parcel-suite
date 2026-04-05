@@ -91,7 +91,10 @@ export default function AppNavigator() {
 
   return (
     <NavigationContainer theme={navTheme}>
-      <Stack.Navigator screenOptions={{ contentStyle: { backgroundColor: colors.bg } }}>
+      <Stack.Navigator
+        key={user ? "signed-in" : "signed-out"}
+        screenOptions={{ contentStyle: { backgroundColor: colors.bg } }}
+      >
         {user == null ? (
           <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
         ) : (
