@@ -241,7 +241,8 @@ export const db = {
   },
 
   findUserByEmail(email: string): User | undefined {
-    return state.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+    const q = email.trim().toLowerCase();
+    return state.users.find((u) => u.email.toLowerCase() === q);
   },
 
   listUsers(): User[] {

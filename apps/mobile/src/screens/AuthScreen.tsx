@@ -35,11 +35,13 @@ export default function AuthScreen() {
         }
         await register(email.trim(), password, name.trim() || email.split("@")[0] || "Agent");
       }
-    } catch {
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : null;
       setError(
         mode === "login"
-          ? "Invalid credentials. Try agent@acme.com / password123"
-          : "Could not sign up (email taken or server unreachable).",
+          ? msg ??
+            "Invalid credentials. Use exactly: agent@acme.com and password123 (web server must be running)."
+          : msg ?? "Could not sign up (email taken or server unreachable).",
       );
     } finally {
       setPending(false);

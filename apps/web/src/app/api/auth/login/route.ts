@@ -6,7 +6,7 @@ import { db } from "@/lib/store";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const email = typeof body.email === "string" ? body.email : "";
+    const email = typeof body.email === "string" ? body.email.trim() : "";
     const password = typeof body.password === "string" ? body.password : "";
     if (!email || !password) {
       return NextResponse.json({ error: "Email and password required" }, { status: 400 });

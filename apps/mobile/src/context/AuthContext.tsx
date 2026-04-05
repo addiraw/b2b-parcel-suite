@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { api, setAuthToken } from "../api/client";
 import type { PublicUser } from "../types";
@@ -34,12 +35,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [refresh]);
 
   const login = useCallback(async (email: string, password: string) => {
-    const { data } = await api.post<{ token: string; user: PublicUser }>("/api/auth/login", {
-      email,
-      password,
-    });
-    await setAuthToken(data.token);
-    setUser(data.user);
+    try {
+      const { data } = await api.post<{ token: string; user: PublicUser }>("/api/auth/login", {
+        email: email.trim(),
+        password,
+      });
+      await setAuthToken(data.token);
+      setUser(data.user);
+    } catch (e) {
+      if (axios.isAxiosError(e) && e.response?.status === 401) {
+        throw new Error("Invalid email or password.");
+      }
+      if (axios.isAxiosError(e) && !e.response) {
+        throw new Error("Cannot reach server. Check API URL and that apps/web is running.");
+      }
+      throw e;
+    }
   }, []);
 
   const register = useCallback(async (email: string, password: string, name: string) => {
